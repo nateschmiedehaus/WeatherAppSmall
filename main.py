@@ -9,6 +9,8 @@ import numpy as np
 from flask import Flask, render_template, request
 import facebook
 from shopify import Shopify
+import facebooksdk
+import shopifyapi
 import requests
 import json
 
