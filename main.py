@@ -13,6 +13,8 @@ import facebooksdk
 import shopifyapi
 import requests
 import json
+import pickle
+
 
 # Define function to retrieve daily CPM, CPC, and Cost per acquisition from Facebook API
 def get_facebook_ad_metrics(access_token, state):
@@ -90,6 +92,30 @@ model = LinearRegression()
 X = data[['cpm', 'cpc', 'cost_per_acquisition', 'tmax', 'tmin', 'prcp', 'snow', 'snwd', 'awnd']]
 y = data['sales']
 model.fit(X, y)
+
+# Define your NOAA API key
+noaa_api_key = 'YOUR_NOAA_API_KEY'
+
+# Define function to load the saved model
+def load_model(model_path):
+    with open(model_path, 'rb') as f:
+        model = pickle.load(f)
+    return model
+
+# Define function to retrieve CPI data for a given state and date
+
+
+def get_cpi_data(state, date):
+    cpi_data = pd.read_csv('https://download.bls.gov/pub/time.series/cu/cu.data.1.AllItems', sep='\t', usecols=['series_id', 'year', 'period', 'value'], dtype={'series_id': str})
+    cpi_data['period'] = cpi_data['period'].str.lower()
+    cpi_data['date'] = pd.to_datetime(cpi_data['year'].astype(str) + cpi_data['period'], format='%Y%B')
+    cpi_data = cpi_data[cpi_data['series_id'].str.contains('CUUR' + state.upper() + '1')]
+    cpi_data = cpi_data[cpi_data['date'] == date]
+    cpi_data = cpi_data.rename(columns={'value': 'all_items'})
+    return cpi_data[['all_items']]
+
+# Define scaler object to scale inputs to the model
+scaler = joblib.load('scaler.pkl')
 
 # Define Flask app and route for predicting sales
 app = Flask(__name__)
