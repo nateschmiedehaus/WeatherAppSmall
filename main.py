@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 import numpy as np
 from flask import Flask, render_template, request
-import facebook-sdk
+import facebook
 from shopify import Shopify
 import shopifyapi
 import requests
@@ -30,6 +30,22 @@ def get_facebook_ad_metrics(access_token, state):
 # Retrieve daily CPM, CPC, and Cost per acquisition from Facebook API for your account by state
 access_token = 'YOUR_FACEBOOK_ACCESS_TOKEN' # Replace with your own access token
 states = ['Alabama', 'Alaska', 'Arizona', 'Arkansas', 'California', 'Colorado', 'Connecticut', 'Delaware', 'Florida', 'Georgia', 'Hawaii', 'Idaho', 'Illinois', 'Indiana', 'Iowa', 'Kansas', 'Kentucky', 'Louisiana', 'Maine', 'Maryland', 'Massachusetts', 'Michigan', 'Minnesota', 'Mississippi', 'Missouri', 'Montana', 'Nebraska', 'Nevada', 'New Hampshire', 'New Jersey', 'New Mexico', 'New York', 'North Carolina', 'North Dakota', 'Ohio', 'Oklahoma', 'Oregon', 'Pennsylvania', 'Rhode Island', 'South Carolina', 'South Dakota', 'Tennessee', 'Texas', 'Utah', 'Vermont', 'Virginia', 'Washington', 'West Virginia', 'Wisconsin', 'Wyoming']
+
+results = pd.DataFrame(columns=['State', 'ROAS', 'Weather Condition'])
+
+for state in states:
+    # Use your model to predict ROAS and weather for this state
+    roas, weather_condition = your_model.predict(state)
+    
+    # Add this information to the 'results' table
+    results = results.append({'State': state, 'ROAS': roas, 'Weather Condition': weather_condition}, ignore_index=True)
+
+total_roas = results['ROAS'].sum()
+
+results['Ad Spend Percentage'] = results['ROAS'] / total_roas
+
+total_budget = user_provided_budget
+results['Ad Spend'] = results['Ad Spend Percentage'] * total_budget
 
 # Define function to retrieve NOAA weather data
 def get_noaa_weather_data(api_key, state, date):
@@ -185,4 +201,4 @@ def predict():
     conf_interval = (y_pred - t_value * se, y_pred + t_value * se)
     conf_interval_str = '${:,.2f} - ${:,.2f}'.format(conf_interval[0][0], conf_interval[1][0])
     # Render results template with predicted sales and confidence interval
-    return render_template('results.html', state=state, date=date, ad_spend='${:,.2f}'.format(ad_spend), sales_pred='${:,.2f}'.format(sales_pred), conf_interval=conf_interval_str, data=data.to_html(classes='table table-striped'), map_svg=map_svg, state_charts=state_charts)
+    return render_template('results.html', state=state, date=date, ad_spend='${:,.2f}'.format(ad_spend), sales_pred='${:,.2f}'.format(sales_pred), conf_interval=conf_interval_str, data=data.to_html(classes='table table-striped'), map_svg=map_svg, state_charts=state_charts, results=results)
