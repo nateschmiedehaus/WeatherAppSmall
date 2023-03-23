@@ -7,9 +7,8 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 import numpy as np
 from flask import Flask, render_template, request
-import facebook
+import facebook-sdk
 from shopify import Shopify
-import facebooksdk
 import shopifyapi
 import requests
 import json
