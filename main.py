@@ -160,4 +160,4 @@ def predict():
     conf_interval = (y_pred - t_value * se, y_pred + t_value * se)
     conf_interval_str = '${:,.2f} - ${:,.2f}'.format(conf_interval[0][0], conf_interval[1][0])
     # Render results template with predicted sales and confidence interval
-        return render_template('results.html', state=state, date=date, ad_spend='${:,.2f}'.format(ad_spend), sales_pred='${:,.2f}'.format(sales_pred), conf_interval=conf_interval_str, data=data.to_html(classes='table table-striped'), map_svg=map_svg, state_charts=state_charts)
+    return render_template('results.html', state=state, date=date, ad_spend='${:,.2f}'.format(ad_spend), sales_pred='${:,.2f}'.format(sales_pred), conf_interval=conf_interval_str, data=data.to_html(classes='table table-striped'), map_svg=map_svg, state_charts=state_charts)
