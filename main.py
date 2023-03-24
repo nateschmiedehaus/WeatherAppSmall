@@ -9,11 +9,10 @@ import numpy as np
 from flask import Flask, render_template, request
 import facebook
 from shopify import Shopify
-import shopifyapi
 import requests
 import json
 import pickle
-
+import datetime
 
 # Define function to retrieve daily CPM, CPC, and Cost per acquisition from Facebook API
 def get_facebook_ad_metrics(access_token, state):
@@ -65,8 +64,8 @@ def get_noaa_weather_data(api_key, state, date):
 
 
 # Define start and end dates for Shopify sales data
-start_date = '2022-01-01'
-end_date = '2022-01-31'
+start_date = '2018-01-01'  # update to earliest date with available data
+end_date = datetime.date.today().strftime('%Y-%m-%d')
 
 # Retrieve daily CPM, CPC, and Cost per acquisition from Facebook API for your account by state
 access_token = 'YOUR_FACEBOOK_ACCESS_TOKEN' # Replace with your own access token
@@ -82,8 +81,6 @@ shop_url = 'YOUR_SHOPIFY_STORE_URL' # Replace with your own store URL
 shopify = Shopify(api_key, password, shop_url)
 sales = {}
 conversion_rates = {}
-for state in states:
-    sales[state], conversion_rates[state] = get_shopify_sales_and_conversion_rates(api_key, password, shop_url, start_date, end_date)
 
 # Combine all the data into a single DataFrame
 data = pd.DataFrame(columns=['state', 'date', 'cpm', 'cpc', 'cost_per_acquisition', 'sales', 'conversion_rate', 'tmax', 'tmin', 'prcp', 'snow', 'snwd', 'awnd', 'awnd_attributes', 'wt01', 'wt02', 'wt03', 'wt04', 'wt05', 'wt06', 'wt07', 'wt08', 'wt09', 'wt10', 'wt11', 'wt13', 'wt14', 'wt15', 'wt16', 'wt17', 'wt18', 'wt19', 'wt21', 'wt22'])
