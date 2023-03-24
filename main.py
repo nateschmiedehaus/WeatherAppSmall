@@ -47,7 +47,7 @@ total_budget = user_provided_budget
 results['Ad Spend'] = results['Ad Spend Percentage'] * total_budget
 
 # Define function to retrieve NOAA weather data
-def get_noaa_weather_data(api_key, state, date):
+def get_noaa_weather_data('noaa_api_key', state, date):
     url = f'https://www.ncdc.noaa.gov/cdo-web/api/v2/data?datasetid=GHCND&datatypeid=TMAX,TMIN,PRCP,SNOW,SNWD,AWND,AWND_ATTRIBUTES,WT01,WT02,WT03,WT04,WT05,WT06,WT07,WT08,WT09,WT10,WT11,WT13,WT14,WT15,WT16,WT17,WT18,WT19,WT21,WT22&units=metric&startdate={date}&enddate={date}&locationid=STATE:{state}&limit=1000'
     headers = {'token': api_key}
     response = requests.get(url, headers=headers)
@@ -68,7 +68,7 @@ start_date = '2018-01-01'  # update to earliest date with available data
 end_date = datetime.date.today().strftime('%Y-%m-%d')
 
 # Retrieve daily CPM, CPC, and Cost per acquisition from Facebook API for your account by state
-access_token = 'YOUR_FACEBOOK_ACCESS_TOKEN' # Replace with your own access token
+ os.environ['FACEBOOK_ACCESS_TOKEN'] # Replace with your own access token
 states = ['Alabama', 'Alaska', 'Arizona', 'Arkansas', 'California', 'Colorado', 'Connecticut', 'Delaware', 'Florida', 'Georgia', 'Hawaii', 'Idaho', 'Illinois', 'Indiana', 'Iowa', 'Kansas', 'Kentucky', 'Louisiana', 'Maine', 'Maryland', 'Massachusetts', 'Michigan', 'Minnesota', 'Mississippi', 'Missouri', 'Montana', 'Nebraska', 'Nevada', 'New Hampshire', 'New Jersey', 'New Mexico', 'New York', 'North Carolina', 'North Dakota', 'Ohio', 'Oklahoma', 'Oregon', 'Pennsylvania', 'Rhode Island', 'South Carolina', 'South Dakota', 'Tennessee', 'Texas', 'Utah', 'Vermont', 'Virginia', 'Washington', 'West Virginia', 'Wisconsin', 'Wyoming']
 ad_metrics = {}
 for state in states:
@@ -78,7 +78,7 @@ for state in states:
 shopify_api_key = os.environ['SHOPIFY_API_KEY'] # Replace with your own API key
 shopify_password = os.environ['SHOPIFY_PASSWORD'] # Replace with your own API password
 shop_url = os.environ['SHOPIFY_STORE_URL'] # Replace with your own store URL
-shopify = Shopify(api_key, password, shop_url)
+shopify = Shopify(shopify_api_key, shopify_password, shop_url)
 sales = {}
 conversion_rates = {}
 
