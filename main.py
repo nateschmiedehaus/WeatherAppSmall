@@ -106,7 +106,7 @@ y = data['sales']
 model.fit(X, y)
 
 # Define your NOAA API key
-noaa_api_key = 'YOUR_NOAA_API_KEY'
+noaa_api_key = os.environ['NOAA_API_KEY']
 
 # Define function to load the saved model
 def load_model(model_path):
