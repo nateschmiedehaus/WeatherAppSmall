@@ -27,7 +27,7 @@ def get_facebook_ad_metrics(access_token, state):
     return ad_insights
 
 # Retrieve daily CPM, CPC, and Cost per acquisition from Facebook API for your account by state
-access_token = 'YOUR_FACEBOOK_ACCESS_TOKEN' # Replace with your own access token
+access_token = os.environ['FACEBOOK_ACCESS_TOKEN'] # Replace with your own access token
 states = ['Alabama', 'Alaska', 'Arizona', 'Arkansas', 'California', 'Colorado', 'Connecticut', 'Delaware', 'Florida', 'Georgia', 'Hawaii', 'Idaho', 'Illinois', 'Indiana', 'Iowa', 'Kansas', 'Kentucky', 'Louisiana', 'Maine', 'Maryland', 'Massachusetts', 'Michigan', 'Minnesota', 'Mississippi', 'Missouri', 'Montana', 'Nebraska', 'Nevada', 'New Hampshire', 'New Jersey', 'New Mexico', 'New York', 'North Carolina', 'North Dakota', 'Ohio', 'Oklahoma', 'Oregon', 'Pennsylvania', 'Rhode Island', 'South Carolina', 'South Dakota', 'Tennessee', 'Texas', 'Utah', 'Vermont', 'Virginia', 'Washington', 'West Virginia', 'Wisconsin', 'Wyoming']
 
 results = pd.DataFrame(columns=['State', 'ROAS', 'Weather Condition'])
@@ -75,9 +75,9 @@ for state in states:
     ad_metrics[state] = get_facebook_ad_metrics(access_token, state)
 
 # Retrieve API Sales and conversion rates per day from Shopify API for the specified date range
-api_key = 'YOUR_SHOPIFY_API_KEY' # Replace with your own API key
-password = 'YOUR_SHOPIFY_API_PASSWORD' # Replace with your own API password
-shop_url = 'YOUR_SHOPIFY_STORE_URL' # Replace with your own store URL
+shopify_api_key = os.environ['SHOPIFY_API_KEY'] # Replace with your own API key
+shopify_password = os.environ['SHOPIFY_PASSWORD'] # Replace with your own API password
+shop_url = os.environ['SHOPIFY_STORE_URL'] # Replace with your own store URL
 shopify = Shopify(api_key, password, shop_url)
 sales = {}
 conversion_rates = {}
@@ -139,10 +139,28 @@ def home():
 @app.route('/predict', methods=['POST'])
 def predict():
     # Retrieve inputs from form
-    state = request.form['state']
-    date = request.form['date']
     ad_spend = float(request.form['ad_spend'])
-    # Get weather data and CPI data for state and date
+    noaa_api_key = request.form['noaa_api_key']
+    cpi_api_key = request.form['cpi_api_key']
+    access_token = request.form['access_token']
+    shopify_api_key = request.form['shopify_api_key']
+    shopify_password = request.form['shopify_password']
+    shopify_store_url = request.form['shopify_store_url']
+    target_roas = float(request.form['target_roas'])
+    budget = float(request.form['budget'])
+
+    # Set the environment variables using the form data
+    os.environ['AD_SPEND'] = str(ad_spend)
+    os.environ['NOAA_API_KEY'] = noaa_api_key
+    os.environ['CPI_API_KEY'] = cpi_api_key
+    os.environ['FACEBOOK_ACCESS_TOKEN'] = access_token
+    os.environ['SHOPIFY_API_KEY'] = shopify_api_key
+    os.environ['SHOPIFY_PASSWORD'] = shopify_password
+    os.environ['SHOPIFY_STORE_URL'] = shopify_store_url
+    os.environ['TARGET_ROAS'] = str(target_roas)
+    os.environ['BUDGET'] = str(budget)
+    
+      # Get weather data and CPI data for state and date
     weather_data = get_noaa_weather_data(noaa_api_key, state, date)
     cpi_data = get_cpi_data(state, date)
     # Calculate predicted sales
